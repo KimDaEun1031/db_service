@@ -4,15 +4,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.daeun.RestAPI_DBsave.Controller.Repository.STNTimeRepository;
 import org.daeun.RestAPI_DBsave.Controller.VO.STNTimeVO;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+//import org.json.simple.JSONArray;
+//import org.json.simple.JSONObject;
+//import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -27,6 +25,11 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 
 @RestController
@@ -58,71 +61,88 @@ public class RestDBController {
             result.put("header", resultMap.getHeaders()); //헤더 정보 확인
             result.put("body", resultMap.getBody()); //실제 데이터 정보 확인  
             
-            ObjectMapper mapper = new ObjectMapper();
+            Gson gson = new Gson();
             
-            String jsonInString = mapper.writeValueAsString(resultMap.getBody());
-        	
+            String jsonStr = gson.toJson(resultMap.getBody()); //map -> json
+           
             
-        	JSONParser jsonParse = new JSONParser();
-        	
-        	JSONObject jsonObj = (JSONObject) jsonParse.parse(jsonInString);
-        	JSONObject stnTimeSearch = (JSONObject) jsonObj.get("SearchSTNTimeTableByIDService");
-        	JSONArray row = (JSONArray) stnTimeSearch.get("row");
+            JsonParser gsonParser =  new JsonParser();   
+            JsonElement element = gsonParser.parse(jsonStr);
+            JsonObject stnTimeSearch = (JsonObject) element.getAsJsonObject().get("SearchSTNTimeTableByIDService");
+            JsonArray row = (JsonArray) stnTimeSearch.get("row");        
+            JsonObject rowList = (JsonObject) row.get(0);
+            
+            STNTimeVO stnVO = gson.fromJson(rowList, STNTimeVO.class);
+
+            
+        	//삽입
+//    		Repository.insert(Arrays.asList(stnVO));
+            
+            
+//json    		
+            
+          //ObjectMapper mapper = new ObjectMapper();
+          //String jsonInString = mapper.writeValueAsString(resultMap.getBody());
+            
+//        	JSONParser jsonParse = new JSONParser();
+//        	
+//        	JSONObject jsonObj = (JSONObject) jsonParse.parse(jsonInString);
+//        	JSONObject stnTimeSearch = (JSONObject) jsonObj.get("SearchSTNTimeTableByIDService");
+//        	JSONArray row = (JSONArray) stnTimeSearch.get("row");
 
 //        	for(int i=0; i < row.size(); i++) { 
-//        		JSONObject list = (JSONObject) row.get(0);
+//        		JSONObject list = (JSONObject) row.get(i);
 //        		
 //        		String LINE_NUM = (String) list.get("LINE_NUM");
-	//    		String FR_CODE = (String) list.get("FR_CODE");
-	//    		String STATION_CD = (String) list.get("STATION_CD");
-	//    		String STATION_NM = (String) list.get("STATION_NM");
-	//    		String TRAIN_NO = (String) list.get("TRAIN_NO");
-	//    		String ARRIVETIME = (String) list.get("ARRIVETIME");
-	//    		String LEFTTIME = (String) list.get("LEFTTIME");
-	//    		String ORIGINSTATION = (String) list.get("ORIGINSTATION");
-	//    		String DESTSTATION = (String) list.get("DESTSTATION");
-	//    		String SUBWAYSNAME = (String) list.get("SUBWAYSNAME");
-	//    		String WEEK_TAG = (String) list.get("WEEK_TAG");
-	//    		String INOUT_TAG = (String) list.get("INOUT_TAG");
-	//    		String FL_FLAG = (String) list.get("FL_FLAG");
-	//    		String DESTSTATION2 = (String) list.get("DESTSTATION2");
-	//    		String EXPRESS_YN = (String) list.get("EXPRESS_YN");
-	//    		String BRANCH_LINE = (String) list.get("BRANCH_LINE");
-////        		
+//	    		String FR_CODE = (String) list.get("FR_CODE");
+//	    		String STATION_CD = (String) list.get("STATION_CD");
+//	    		String STATION_NM = (String) list.get("STATION_NM");
+//	    		String TRAIN_NO = (String) list.get("TRAIN_NO");
+//	    		String ARRIVETIME = (String) list.get("ARRIVETIME");
+//	    		String LEFTTIME = (String) list.get("LEFTTIME");
+//	    		String ORIGINSTATION = (String) list.get("ORIGINSTATION");
+//	    		String DESTSTATION = (String) list.get("DESTSTATION");
+//	    		String SUBWAYSNAME = (String) list.get("SUBWAYSNAME");
+//	    		String WEEK_TAG = (String) list.get("WEEK_TAG");
+//	    		String INOUT_TAG = (String) list.get("INOUT_TAG");
+//	    		String FL_FLAG = (String) list.get("FL_FLAG");
+//	    		String DESTSTATION2 = (String) list.get("DESTSTATION2");
+//	    		String EXPRESS_YN = (String) list.get("EXPRESS_YN");
+//	    		String BRANCH_LINE = (String) list.get("BRANCH_LINE");
+//        		
 //        		System.out.println("LINE_NUM : " +LINE_NUM);
 //        	}
 
       	
-        	JSONObject list = (JSONObject) row.get(1);
+//        	JSONObject list = (JSONObject) row.get(0);
     		
-    		String LINE_NUM = (String) list.get("LINE_NUM");
-    		String FR_CODE = (String) list.get("FR_CODE");
-    		String STATION_CD = (String) list.get("STATION_CD");
-    		String STATION_NM = (String) list.get("STATION_NM");
-    		String TRAIN_NO = (String) list.get("TRAIN_NO");
-    		String ARRIVETIME = (String) list.get("ARRIVETIME");
-    		String LEFTTIME = (String) list.get("LEFTTIME");
-    		String ORIGINSTATION = (String) list.get("ORIGINSTATION");
-    		String DESTSTATION = (String) list.get("DESTSTATION");
-    		String SUBWAYSNAME = (String) list.get("SUBWAYSNAME");
-    		String WEEK_TAG = (String) list.get("WEEK_TAG");
-    		String INOUT_TAG = (String) list.get("INOUT_TAG");
-    		String FL_FLAG = (String) list.get("FL_FLAG");
-    		String DESTSTATION2 = (String) list.get("DESTSTATION2");
-    		String EXPRESS_YN = (String) list.get("EXPRESS_YN");
-    		String BRANCH_LINE = (String) list.get("BRANCH_LINE");
-    		
-    		
-    		STNTimeVO stnTimeVO = new STNTimeVO(null, LINE_NUM, FR_CODE, STATION_CD, STATION_NM, TRAIN_NO, ARRIVETIME, LEFTTIME, ORIGINSTATION, DESTSTATION, SUBWAYSNAME, WEEK_TAG, INOUT_TAG, FL_FLAG, DESTSTATION2, EXPRESS_YN, BRANCH_LINE);
+//    		String LINE_NUM = (String) list.get("LINE_NUM");
+//    		String FR_CODE = (String) list.get("FR_CODE");
+//    		String STATION_CD = (String) list.get("STATION_CD");
+//    		String STATION_NM = (String) list.get("STATION_NM");
+//    		String TRAIN_NO = (String) list.get("TRAIN_NO");
+//    		String ARRIVETIME = (String) list.get("ARRIVETIME");
+//    		String LEFTTIME = (String) list.get("LEFTTIME");
+//    		String ORIGINSTATION = (String) list.get("ORIGINSTATION");
+//    		String DESTSTATION = (String) list.get("DESTSTATION");
+//    		String SUBWAYSNAME = (String) list.get("SUBWAYSNAME");
+//    		String WEEK_TAG = (String) list.get("WEEK_TAG");
+//    		String INOUT_TAG = (String) list.get("INOUT_TAG");
+//    		String FL_FLAG = (String) list.get("FL_FLAG");
+//    		String DESTSTATION2 = (String) list.get("DESTSTATION2");
+//    		String EXPRESS_YN = (String) list.get("EXPRESS_YN");
+//    		String BRANCH_LINE = (String) list.get("BRANCH_LINE");
     		
     		
-    		//Repository.insert(Arrays.asList(stnTimeVO));
-    		String stnSubwayName = Repository.findBySUBWAYSNAME("약수");
-    		 
-    		stnTime = stnSubwayName;
+//    		STNTimeVO stnTimeVO = new STNTimeVO(null, LINE_NUM, FR_CODE, STATION_CD, STATION_NM, TRAIN_NO, ARRIVETIME, LEFTTIME, ORIGINSTATION, DESTSTATION, SUBWAYSNAME, WEEK_TAG, INOUT_TAG, FL_FLAG, DESTSTATION2, EXPRESS_YN, BRANCH_LINE);
+    		
+    		//삽입
+//    		Repository.insert(Arrays.asList(stnTimeVO));
+    		
+    		//조회
+    		stnTime = Repository.findBySUBWAYSNAME("약수");
 
-
-           
+ 
 		} catch (HttpClientErrorException | HttpServerErrorException e) {
 			result.put("statusCode", e.getRawStatusCode());
             result.put("body"  , e.getStatusText());
