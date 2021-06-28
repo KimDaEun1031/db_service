@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @Document(collection = "covid")
-public class Covid_Vaccine_StatVO {
+public class CovidVaccineStatVO {
 	
 	@Id
 	private String id;
