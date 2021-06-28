@@ -2,12 +2,12 @@ package org.daeun.RestAPI_DBsave.Controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.daeun.RestAPI_DBsave.Controller.Repository.STNTimeRepository;
-import org.daeun.RestAPI_DBsave.Controller.VO.STNTimeVO;
+import org.daeun.RestAPI_DBsave.Controller.Repository.Covid_Vaccine_StatRepository;
+import org.daeun.RestAPI_DBsave.Controller.VO.Covid_Vaccine_StatVO;
 //import org.json.simple.JSONArray;
 //import org.json.simple.JSONObject;
 //import org.json.simple.parser.JSONParser;
@@ -16,15 +16,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -36,111 +32,77 @@ import com.google.gson.JsonParser;
 public class RestDBController {
 	
 	@Autowired
-	private STNTimeRepository Repository;
+	private Covid_Vaccine_StatRepository repository;
 	
-	@GetMapping("/STNtimeDB")
+	@GetMapping("/covid_vaccine_stat_DB")
 	public String callAPI() {
 		HashMap<String, Object> result = new HashMap<String, Object>();
 		
-		String stnTime = "";
+		String jsonInString = "";
 		try {
-			HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-			factory.setConnectTimeout(5000);
-			factory.setReadTimeout(5000);
-			RestTemplate restTemplate = new RestTemplate(factory);
+			RestTemplate restTemplate = new RestTemplate();
 			
 			HttpHeaders header = new HttpHeaders();
 			HttpEntity<?> entity = new HttpEntity<>(header);
 			
-			String url = "http://localhost:9090/STNtime";
+			int day_1 = 10;
+			for(int j=0; j<19; j++) {
+				
+				for(int i=0; i<18; i++) {
+					
+					String day = Integer.toString(day_1);
+					
+					String url = "http://localhost:9090/covid_vaccine_stat?month=06&day="+day;
+					
+					ResponseEntity<Map> resultMap = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+					result.put("statusCode", resultMap.getStatusCodeValue());
+		            result.put("header", resultMap.getHeaders());
+		            result.put("body", resultMap.getBody());
+		           
+		            
+		            Gson gson = new Gson();
+		            
+		            jsonInString = gson.toJson(resultMap.getBody());
+		            JsonParser gsonParser =  new JsonParser();   
+		            JsonElement element = gsonParser.parse(jsonInString);
+		            JsonArray row = (JsonArray) element.getAsJsonObject().get("data");
+		            JsonObject rowList = (JsonObject) row.get(i);
+		            
+		            Covid_Vaccine_StatVO covidVO = gson.fromJson(rowList, Covid_Vaccine_StatVO.class);
+		            
+//		            repository.insert(Arrays.asList(covidVO));
+
+		            
+		            jsonInString = repository.findBysido("전국");
+//		            System.out.println(day);
+				}
+	            day_1++;
+			}
 			
-			 UriComponents uri = UriComponentsBuilder.fromHttpUrl(url).build();
+						
 			
-			ResponseEntity<Map> resultMap = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, Map.class);
-			result.put("statusCode", resultMap.getStatusCodeValue()); //http status code를 확인
-            result.put("header", resultMap.getHeaders()); //헤더 정보 확인
-            result.put("body", resultMap.getBody()); //실제 데이터 정보 확인  
             
-            Gson gson = new Gson();
             
-            String jsonStr = gson.toJson(resultMap.getBody()); //map -> json
+            
+//            String jsonStr = gson.toJson(resultMap.getBody()); //map -> json
+//            jsonInString = gson.toJson(resultMap.getBody()); //map -> json
            
             
-            JsonParser gsonParser =  new JsonParser();   
-            JsonElement element = gsonParser.parse(jsonStr);
-            JsonObject stnTimeSearch = (JsonObject) element.getAsJsonObject().get("SearchSTNTimeTableByIDService");
-            JsonArray row = (JsonArray) stnTimeSearch.get("row");        
-            JsonObject rowList = (JsonObject) row.get(0);
-            
-            STNTimeVO stnVO = gson.fromJson(rowList, STNTimeVO.class);
+//            JsonParser gsonParser =  new JsonParser();   
+//            JsonElement element = gsonParser.parse(jsonStr);
+//            JsonObject stnTimeSearch = (JsonObject) element.getAsJsonObject().get("SearchSTNTimeTableByIDService");
+//            JsonArray row = (JsonArray) stnTimeSearch.get("row");        
+//            JsonObject rowList = (JsonObject) row.get(0);
+//            
+//            STNTimeVO stnVO = gson.fromJson(rowList, STNTimeVO.class);
 
             
         	//삽입
 //    		Repository.insert(Arrays.asList(stnVO));
-            
-            
-//json    		
-            
-          //ObjectMapper mapper = new ObjectMapper();
-          //String jsonInString = mapper.writeValueAsString(resultMap.getBody());
-            
-//        	JSONParser jsonParse = new JSONParser();
-//        	
-//        	JSONObject jsonObj = (JSONObject) jsonParse.parse(jsonInString);
-//        	JSONObject stnTimeSearch = (JSONObject) jsonObj.get("SearchSTNTimeTableByIDService");
-//        	JSONArray row = (JSONArray) stnTimeSearch.get("row");
 
-//        	for(int i=0; i < row.size(); i++) { 
-//        		JSONObject list = (JSONObject) row.get(i);
-//        		
-//        		String LINE_NUM = (String) list.get("LINE_NUM");
-//	    		String FR_CODE = (String) list.get("FR_CODE");
-//	    		String STATION_CD = (String) list.get("STATION_CD");
-//	    		String STATION_NM = (String) list.get("STATION_NM");
-//	    		String TRAIN_NO = (String) list.get("TRAIN_NO");
-//	    		String ARRIVETIME = (String) list.get("ARRIVETIME");
-//	    		String LEFTTIME = (String) list.get("LEFTTIME");
-//	    		String ORIGINSTATION = (String) list.get("ORIGINSTATION");
-//	    		String DESTSTATION = (String) list.get("DESTSTATION");
-//	    		String SUBWAYSNAME = (String) list.get("SUBWAYSNAME");
-//	    		String WEEK_TAG = (String) list.get("WEEK_TAG");
-//	    		String INOUT_TAG = (String) list.get("INOUT_TAG");
-//	    		String FL_FLAG = (String) list.get("FL_FLAG");
-//	    		String DESTSTATION2 = (String) list.get("DESTSTATION2");
-//	    		String EXPRESS_YN = (String) list.get("EXPRESS_YN");
-//	    		String BRANCH_LINE = (String) list.get("BRANCH_LINE");
-//        		
-//        		System.out.println("LINE_NUM : " +LINE_NUM);
-//        	}
-
-      	
-//        	JSONObject list = (JSONObject) row.get(0);
-    		
-//    		String LINE_NUM = (String) list.get("LINE_NUM");
-//    		String FR_CODE = (String) list.get("FR_CODE");
-//    		String STATION_CD = (String) list.get("STATION_CD");
-//    		String STATION_NM = (String) list.get("STATION_NM");
-//    		String TRAIN_NO = (String) list.get("TRAIN_NO");
-//    		String ARRIVETIME = (String) list.get("ARRIVETIME");
-//    		String LEFTTIME = (String) list.get("LEFTTIME");
-//    		String ORIGINSTATION = (String) list.get("ORIGINSTATION");
-//    		String DESTSTATION = (String) list.get("DESTSTATION");
-//    		String SUBWAYSNAME = (String) list.get("SUBWAYSNAME");
-//    		String WEEK_TAG = (String) list.get("WEEK_TAG");
-//    		String INOUT_TAG = (String) list.get("INOUT_TAG");
-//    		String FL_FLAG = (String) list.get("FL_FLAG");
-//    		String DESTSTATION2 = (String) list.get("DESTSTATION2");
-//    		String EXPRESS_YN = (String) list.get("EXPRESS_YN");
-//    		String BRANCH_LINE = (String) list.get("BRANCH_LINE");
-    		
-    		
-//    		STNTimeVO stnTimeVO = new STNTimeVO(null, LINE_NUM, FR_CODE, STATION_CD, STATION_NM, TRAIN_NO, ARRIVETIME, LEFTTIME, ORIGINSTATION, DESTSTATION, SUBWAYSNAME, WEEK_TAG, INOUT_TAG, FL_FLAG, DESTSTATION2, EXPRESS_YN, BRANCH_LINE);
-    		
-    		//삽입
-//    		Repository.insert(Arrays.asList(stnTimeVO));
     		
     		//조회
-    		stnTime = Repository.findBySUBWAYSNAME("약수");
+//    		stnTime = Repository.findBySUBWAYSNAME("약수");
 
  
 		} catch (HttpClientErrorException | HttpServerErrorException e) {
@@ -156,7 +118,7 @@ public class RestDBController {
         }
  
 		
-		return stnTime;
+		return jsonInString;
 	}
 	
 	
