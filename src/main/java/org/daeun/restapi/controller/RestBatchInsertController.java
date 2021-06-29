@@ -1,8 +1,9 @@
-package org.daeun.RestAPI_DBsave.Controller;
+package org.daeun.restapi.controller;
 
 import com.google.gson.*;
-import org.daeun.RestAPI_DBsave.Controller.Repository.Covid_Vaccine_StatRepository;
-import org.daeun.RestAPI_DBsave.Controller.VO.CovidVaccineStatVO;
+
+import org.daeun.restapi.repository.CovidVaccineStatRepository;
+import org.daeun.restapi.vo.CovidVaccineStatVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

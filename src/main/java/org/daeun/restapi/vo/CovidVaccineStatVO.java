@@ -1,4 +1,4 @@
-package org.daeun.RestAPI_DBsave.Controller.VO;
+package org.daeun.restapi.vo;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

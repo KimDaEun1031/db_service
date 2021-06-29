@@ -1,4 +1,4 @@
-package org.daeun.RestAPI_DBsave;
+package org.daeun.restapi.test;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

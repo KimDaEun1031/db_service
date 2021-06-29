@@ -1,4 +1,4 @@
-package org.daeun.RestAPI_DBsave;
+package org.daeun.restapi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

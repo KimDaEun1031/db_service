@@ -1,4 +1,4 @@
-package org.daeun.RestAPI_DBsave.Controller;
+package org.daeun.restapi.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.daeun.RestAPI_DBsave.Controller.Repository.Covid_Vaccine_StatRepository;
-import org.daeun.RestAPI_DBsave.Controller.VO.CovidVaccineStatVO;
+import org.daeun.restapi.repository.CovidVaccineStatRepository;
+import org.daeun.restapi.vo.CovidVaccineStatVO;
 //import org.json.simple.JSONArray;
 //import org.json.simple.JSONObject;
 //import org.json.simple.parser.JSONParser;
@@ -35,7 +35,7 @@ import com.google.gson.JsonParser;
 public class RestMongoDbController {
 
     @Autowired
-    private Covid_Vaccine_StatRepository repository;
+    private CovidVaccineStatRepository repository;
 
     @GetMapping("/covidVaccineStatDb")
     public String covidVaccineStatDb() {
