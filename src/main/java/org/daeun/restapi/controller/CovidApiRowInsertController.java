@@ -92,44 +92,5 @@ public class CovidApiRowInsertController {
 
     }
 
-    @GetMapping("/searchCovidVaccineStat")
-    public String searchCovidVaccineStat(@RequestParam(required = false, defaultValue = "#{T(java.time.LocalDateTime).now()}") LocalDateTime dateTime, @RequestParam(required = false, defaultValue = "전국") String sido) {
-
-    //defaultValue = "#{T(java.time.LocalDateTime).now()}"
-        String search = "";
-        try {
-//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy.MM.dd", Locale.ENGLISH);
-//            LocalDateTime date = simpleDateFormat.parse(baseDate);
-//
-//            SimpleDateFormat tranSimpleFormat = new SimpleDateFormat("yy-MM-dd HH:mm:ss", Locale.ENGLISH);
-//            baseDate = "20"+tranSimpleFormat.format(date);
-//
-
-            List<CovidVaccineStatVO> list = new ArrayList<>();
-
-
-            String baseDate = dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
-            log.info(baseDate);
-
-            list = covidVaccineStatRepository.findByBaseDate(baseDate);
-
-            for (int j=0; j<list.size(); j++) {
-                search = String.valueOf(list);
-
-            }
-            log.info("success");
-
-            }
-        catch (Exception e) {
-            log.info("error");
-            log.info(e.toString());
-        }
-
-        return search;
-    }
-
-
-
 
 }

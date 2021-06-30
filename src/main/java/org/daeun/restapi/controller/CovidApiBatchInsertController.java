@@ -44,7 +44,7 @@ public class CovidApiBatchInsertController {
             Gson gson = new Gson();
             JsonParser jsonParser = new JsonParser();
 
-            LocalDate date = LocalDate.now();
+            LocalDate date = LocalDate.now().minusDays(1);
 
             String url = String.format("http://localhost:9090/covidVaccineStat?month=%02d&day=%02d", date.getMonthValue(), date.getDayOfMonth());
 
@@ -67,7 +67,8 @@ public class CovidApiBatchInsertController {
                 batchList.add(covidVO);
 
             }
-//          covidVaccineStatRepository.insert(batchList);
+
+          covidVaccineStatRepository.insert(batchList);
 
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             result.put("statusCode", e.getRawStatusCode());

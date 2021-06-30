@@ -10,4 +10,5 @@ import java.util.List;
 public interface CovidVaccineStatRepository extends MongoRepository<CovidVaccineStatVO, String>{
 
 	List<CovidVaccineStatVO> findByBaseDate(String baseDate);
+	List<CovidVaccineStatVO> findByBaseDateOrSido(String baseDate, String sido);
 }
