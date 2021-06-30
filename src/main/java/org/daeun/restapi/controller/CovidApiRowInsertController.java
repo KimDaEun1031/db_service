@@ -1,5 +1,6 @@
 package org.daeun.restapi.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -91,12 +93,13 @@ public class CovidApiRowInsertController {
     }
 
     @GetMapping("/searchCovidVaccineStat")
-    public String searchCovidVaccineStat(@RequestParam(required = false, defaultValue = "#{T(java.time.LocalDateTime).now()}") String baseDate, @RequestParam(required = false, defaultValue = "전국") String sido) {
+    public String searchCovidVaccineStat(@RequestParam(required = false, defaultValue = "#{T(java.time.LocalDateTime).now()}") LocalDateTime dateTime, @RequestParam(required = false, defaultValue = "전국") String sido) {
+
     //defaultValue = "#{T(java.time.LocalDateTime).now()}"
         String search = "";
         try {
 //            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy.MM.dd", Locale.ENGLISH);
-//            Date date = simpleDateFormat.parse(baseDate);
+//            LocalDateTime date = simpleDateFormat.parse(baseDate);
 //
 //            SimpleDateFormat tranSimpleFormat = new SimpleDateFormat("yy-MM-dd HH:mm:ss", Locale.ENGLISH);
 //            baseDate = "20"+tranSimpleFormat.format(date);
@@ -104,7 +107,12 @@ public class CovidApiRowInsertController {
 
             List<CovidVaccineStatVO> list = new ArrayList<>();
 
-            list = covidVaccineStatRepository.findByBaseDateOrSido(baseDate, sido);
+
+            String baseDate = dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+            log.info(baseDate);
+
+            list = covidVaccineStatRepository.findByBaseDate(baseDate);
 
             for (int j=0; j<list.size(); j++) {
                 search = String.valueOf(list);
