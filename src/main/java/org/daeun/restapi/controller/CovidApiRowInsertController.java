@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import org.daeun.restapi.repository.CovidVaccineStatRepository;
@@ -90,7 +91,7 @@ public class CovidApiRowInsertController {
     }
 
     @GetMapping("/searchCovidVaccineStat")
-    public String searchCovidVaccineStat(@RequestParam(required = false) String baseDate, @RequestParam(required = false, defaultValue = "전국") String sido) {
+    public String searchCovidVaccineStat(@RequestParam(required = false, defaultValue = "#{T(java.time.LocalDateTime).now()}") String baseDate, @RequestParam(required = false, defaultValue = "전국") String sido) {
     //defaultValue = "#{T(java.time.LocalDateTime).now()}"
         String search = "";
         try {
