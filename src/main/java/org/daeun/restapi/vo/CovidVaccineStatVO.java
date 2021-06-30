@@ -1,5 +1,6 @@
 package org.daeun.restapi.vo;
 
+import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -22,5 +23,6 @@ public class CovidVaccineStatVO {
 	private int totalSecondCnt;
 	private int accumulatedFirstCnt;
 	private int accumulatedSecondCnt;
+
 
 }
