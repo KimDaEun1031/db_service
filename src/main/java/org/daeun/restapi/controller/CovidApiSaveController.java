@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
-public class CovidApiGetController {
+public class CovidApiSaveController {
 
-    @PostMapping ("/getJson")
+    @PostMapping ("/saveCovidVaccineStat")
     @ResponseBody
-    public Object getJson(@RequestBody JsonArray arrayData) {
+    public Object saveCovidVaccineStat(@RequestBody JsonArray arrayData) {
 
         log.info(String.valueOf(arrayData));
 //        String jsonInString = "";
