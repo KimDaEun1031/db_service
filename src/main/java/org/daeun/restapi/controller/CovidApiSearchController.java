@@ -60,4 +60,10 @@ public class CovidApiSearchController {
     }
 
 
+    @GetMapping("/batchSearchCovidVaccineStat")
+    public List<CovidVaccineStatVO> batchSearchCovidVaccineStat() {
+        List<CovidVaccineStatVO> covidList = covidVaccineStatRepository.findAll();
+        return covidList;
+    }
+
 }

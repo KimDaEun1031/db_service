@@ -82,10 +82,59 @@ public class CovidApiBatchInsertController {
         }
     }
 
-    @GetMapping("/batchSearchCovidVaccineStat")
-    public List<CovidVaccineStatVO> batchSearchCovidVaccineStat() {
-        List<CovidVaccineStatVO> covidList = covidVaccineStatRepository.findAll();
-        return covidList;
+    @GetMapping("/CovidVaccineStatTotal")
+    public String CovidVaccineStatTotal() {
+        Map<String, Object> result = new HashMap<String, Object>();
+
+        String jsonInString = "";
+        int totalCount = 0;
+
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+
+            HttpHeaders header = new HttpHeaders();
+            HttpEntity<?> entity = new HttpEntity<>(header);
+
+            Gson gson = new Gson();
+            JsonParser jsonParser = new JsonParser();
+
+            String url = String.format("http://localhost:9090/covidVaccineStatBatch?totalCount=%u", totalCount);
+
+            ResponseEntity<Map> resultMap = restTemplate.exchange(URI.create(url), HttpMethod.GET, entity, Map.class);
+            result.put("statusCode", resultMap.getStatusCodeValue());
+            result.put("header", resultMap.getHeaders());
+            result.put("body", resultMap.getBody());
+
+            jsonInString = gson.toJson(resultMap.getBody());
+
+            JsonElement element = jsonParser.parse(jsonInString);
+            JsonArray row = (JsonArray) element.getAsJsonObject().get("data");
+
+            List<CovidVaccineStatVO> batchList = new ArrayList<>();
+
+            for (int j = 0; j < row.size(); j++) {
+                JsonObject rowList = (JsonObject) row.get(j);
+
+                CovidVaccineStatVO covidVO = gson.fromJson(rowList, CovidVaccineStatVO.class);
+                batchList.add(covidVO);
+
+            }
+
+            covidVaccineStatRepository.insert(batchList);
+
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            result.put("statusCode", e.getRawStatusCode());
+            result.put("body", e.getStatusText());
+            log.info(e.toString());
+
+        } catch (Exception e) {
+            result.put("statusCode", "999");
+            result.put("body", "excpetion 오류");
+            log.info(e.toString());
+        }
+
+        return jsonInString;
     }
+
 
 }
