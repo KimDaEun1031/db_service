@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
-@Document(collection = "covid")
+@Document(collection = "covidPractice")
 public class CovidVaccineStatVO {
 	
 	@Id

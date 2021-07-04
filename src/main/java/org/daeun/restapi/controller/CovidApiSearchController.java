@@ -42,7 +42,7 @@ public class CovidApiSearchController {
 
             log.info(baseDate);
 
-            list = covidVaccineStatRepository.findByBaseDate(baseDate);
+//            list = covidVaccineStatRepository.findByBaseDateOrSido(baseDate);
 
             for (int j=0; j<list.size(); j++) {
                 search = String.valueOf(list);
