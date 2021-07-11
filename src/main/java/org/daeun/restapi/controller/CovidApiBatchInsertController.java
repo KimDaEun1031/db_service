@@ -98,7 +98,7 @@ public class CovidApiBatchInsertController {
             Gson gson = new Gson();
             JsonParser jsonParser = new JsonParser();
 
-            String url = String.format("http://localhost:9090/covidVaccineStatBatch?totalCount=%u", totalCount);
+            String url = String.format("http://localhost:9090/covidVaccineStatBatch?totalCount=%d", totalCount);
 
             ResponseEntity<Map> resultMap = restTemplate.exchange(URI.create(url), HttpMethod.GET, entity, Map.class);
             result.put("statusCode", resultMap.getStatusCodeValue());
@@ -120,7 +120,7 @@ public class CovidApiBatchInsertController {
 
             }
 
-            covidVaccineStatRepository.insert(batchList);
+//            covidVaccineStatRepository.insert(batchList);
 
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             result.put("statusCode", e.getRawStatusCode());

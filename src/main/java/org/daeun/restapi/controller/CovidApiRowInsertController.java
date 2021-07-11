@@ -76,7 +76,7 @@ public class CovidApiRowInsertController {
 
                     CovidVaccineStatVO covidVO = gson.fromJson(rowList, CovidVaccineStatVO.class);
 
-                    covidVaccineStatRepository.insert(covidVO);
+//                    covidVaccineStatRepository.insert(covidVO);
                     }
 
         } catch (HttpClientErrorException | HttpServerErrorException e) {

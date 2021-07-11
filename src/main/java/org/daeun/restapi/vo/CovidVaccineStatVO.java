@@ -26,5 +26,7 @@ public class CovidVaccineStatVO {
 	private int accumulatedFirstCnt;
 	private int accumulatedSecondCnt;
 
+//	private String startDate;
+//	private String endDate;
 
 }

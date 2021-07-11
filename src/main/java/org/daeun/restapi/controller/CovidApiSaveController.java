@@ -17,7 +17,6 @@ public class CovidApiSaveController {
     CovidVaccineStatRepository covidVaccineStatRepository;
 
     @PostMapping (value = "/saveCovidVaccineStat", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
     public void saveCovidVaccineStat(@RequestBody List<CovidVaccineStatVO> data) {
 
         log.info("data = {}",data);
@@ -27,10 +26,12 @@ public class CovidApiSaveController {
 
             if(covidVoList.isEmpty()) {
                 covidVaccineStatRepository.insert(vo);
+                log.info("insert data success!");
             }
         }
 
-        log.info("insert data success!");
+        log.info("It already in the data!");
+
 
     }
 
