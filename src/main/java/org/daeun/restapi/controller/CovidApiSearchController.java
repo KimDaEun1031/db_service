@@ -16,10 +16,7 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @Slf4j
@@ -67,12 +64,14 @@ public class CovidApiSearchController {
 
         String jsonInString = "";
         try {
-            startDate += " 00:00:00";
-            endDate += " 00:00:00";
+
+            List<String> sidoList = Arrays.asList(sido.split(","));
+            log.info("sidoList = {}", sidoList);
 
             List<CovidVaccineStatVO> list = new ArrayList<>();
 
-            list = covidVaccineStatRepository.findByBaseDateBetweenAndSido(startDate, endDate, sido);
+            list = covidVaccineStatRepository.findAllByBaseDateBetweenAndSidoIn(startDate, endDate, sidoList);
+            log.info("list = {}", list);
 
             Gson gson = new Gson();
             JsonParser jsonParser = new JsonParser();
@@ -100,5 +99,21 @@ public class CovidApiSearchController {
         return jsonInString;
     }
 
+    @GetMapping("/sido")
+    public String mongoSidoInTest() {
+//        List<CovidVaccineStatVO> list = new ArrayList<>();
+        List<String> sidoList = new ArrayList<>();
+
+        sidoList.add("전국");
+        sidoList.add("서울특별시");
+
+        String jsonInString = "";
+
+        List<CovidVaccineStatVO> list = covidVaccineStatRepository.findAllByBaseDateBetweenAndSidoIn ("2021-04-01 00:00:00","2021-04-03 00:00:00",sidoList);
+//        log.info("list = {}", list);
+
+        return jsonInString;
+
+    }
 
 }

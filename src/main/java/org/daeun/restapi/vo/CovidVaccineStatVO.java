@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -19,6 +20,7 @@ public class CovidVaccineStatVO {
 	
 	private String baseDate;
 	private String sido;
+//	private List<String> dosi;
 	private int firstCnt;
 	private int secondCnt;
 	private int totalFirstCnt;
