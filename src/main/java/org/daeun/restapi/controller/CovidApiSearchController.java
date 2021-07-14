@@ -82,9 +82,6 @@ public class CovidApiSearchController {
 
             log.info("data = {} ", jsonInString);
 
-            log.info("SUCCESS");
-
-
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             result.put("statusCode", e.getRawStatusCode());
             result.put("body", e.getStatusText());

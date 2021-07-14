@@ -20,7 +20,6 @@ public class CovidVaccineStatVO {
 	
 	private String baseDate;
 	private String sido;
-//	private List<String> dosi;
 	private int firstCnt;
 	private int secondCnt;
 	private int totalFirstCnt;
@@ -28,7 +27,5 @@ public class CovidVaccineStatVO {
 	private int accumulatedFirstCnt;
 	private int accumulatedSecondCnt;
 
-//	private String startDate;
-//	private String endDate;
 
 }
