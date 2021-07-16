@@ -1,4 +1,4 @@
-package org.daeun.restapi.controller;
+package org.daeun.db.controller;
 
 import org.junit.jupiter.api.Test;
 

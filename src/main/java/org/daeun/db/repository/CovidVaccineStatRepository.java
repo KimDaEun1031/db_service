@@ -1,9 +1,7 @@
-package org.daeun.restapi.repository;
+package org.daeun.db.repository;
 
-import org.daeun.restapi.vo.CovidVaccineStatVO;
+import org.daeun.db.vo.CovidVaccineStatVO;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 

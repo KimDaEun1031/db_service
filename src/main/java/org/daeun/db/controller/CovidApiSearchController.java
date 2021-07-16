@@ -1,20 +1,16 @@
-package org.daeun.restapi.controller;
+package org.daeun.db.controller;
 
 import com.google.gson.*;
 import lombok.extern.slf4j.Slf4j;
-import org.daeun.restapi.repository.CovidVaccineStatRepository;
-import org.daeun.restapi.vo.CovidVaccineStatVO;
+import org.daeun.db.repository.CovidVaccineStatRepository;
+import org.daeun.db.vo.CovidVaccineStatVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -57,10 +53,10 @@ public class CovidApiSearchController {
 
     @GetMapping("/searchPeriodDataCovidVaccineStat")
     public String searchPeriodDataCovidVaccineStat(String startDate, String endDate, String sido) {
-        Map<String, Object> result = new HashMap<String, Object>();
 
-        log.info("date = {}", startDate);
-        log.info("date = {}", endDate);
+        log.info("startDate = {}", startDate);
+        log.info("endDate = {}", endDate);
+        log.info("sido = {}",sido);
 
         String jsonInString = "";
         try {
@@ -83,13 +79,9 @@ public class CovidApiSearchController {
             log.info("data = {} ", jsonInString);
 
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            result.put("statusCode", e.getRawStatusCode());
-            result.put("body", e.getStatusText());
             log.error(e.toString());
 
         } catch (Exception e) {
-            result.put("statusCode", "999");
-            result.put("body", "excpetion 오류");
             log.error(e.toString());
         }
 

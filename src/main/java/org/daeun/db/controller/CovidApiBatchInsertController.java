@@ -1,10 +1,10 @@
-package org.daeun.restapi.controller;
+package org.daeun.db.controller;
 
 import com.google.gson.*;
 
 import lombok.extern.slf4j.Slf4j;
-import org.daeun.restapi.repository.CovidVaccineStatRepository;
-import org.daeun.restapi.vo.CovidVaccineStatVO;
+import org.daeun.db.repository.CovidVaccineStatRepository;
+import org.daeun.db.vo.CovidVaccineStatVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -33,8 +33,6 @@ public class CovidApiBatchInsertController {
 
     @GetMapping("/batchInsertCovidVaccineStat")
     public void batchInsertCovidVaccineStat() {
-        Map<String, Object> result = new HashMap<String, Object>();
-
         try {
             RestTemplate restTemplate = new RestTemplate();
 
@@ -47,11 +45,9 @@ public class CovidApiBatchInsertController {
             LocalDate date = LocalDate.now().minusDays(1);
 
             String url = String.format("http://localhost:9090/covidVaccineStat?month=%02d&day=%02d", date.getMonthValue(), date.getDayOfMonth());
+            log.info("url = {}",url);
 
             ResponseEntity<Map> resultMap = restTemplate.exchange(URI.create(url), HttpMethod.GET, entity, Map.class);
-            result.put("statusCode", resultMap.getStatusCodeValue());
-            result.put("header", resultMap.getHeaders());
-            result.put("body", resultMap.getBody());
 
             String jsonInString = gson.toJson(resultMap.getBody());
 
@@ -71,20 +67,15 @@ public class CovidApiBatchInsertController {
           covidVaccineStatRepository.insert(batchList);
 
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            result.put("statusCode", e.getRawStatusCode());
-            result.put("body", e.getStatusText());
             log.info(e.toString());
 
         } catch (Exception e) {
-            result.put("statusCode", "999");
-            result.put("body", "excpetion 오류");
             log.info(e.toString());
         }
     }
 
     @GetMapping("/CovidVaccineStatTotal")
     public String CovidVaccineStatTotal() {
-        Map<String, Object> result = new HashMap<String, Object>();
 
         String jsonInString = "";
         int totalCount = 0;
@@ -99,11 +90,9 @@ public class CovidApiBatchInsertController {
             JsonParser jsonParser = new JsonParser();
 
             String url = String.format("http://localhost:9090/covidVaccineStatBatch?totalCount=%d", totalCount);
+            log.info("url = {}",url);
 
             ResponseEntity<Map> resultMap = restTemplate.exchange(URI.create(url), HttpMethod.GET, entity, Map.class);
-            result.put("statusCode", resultMap.getStatusCodeValue());
-            result.put("header", resultMap.getHeaders());
-            result.put("body", resultMap.getBody());
 
             jsonInString = gson.toJson(resultMap.getBody());
 
@@ -123,13 +112,9 @@ public class CovidApiBatchInsertController {
 //            covidVaccineStatRepository.insert(batchList);
 
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            result.put("statusCode", e.getRawStatusCode());
-            result.put("body", e.getStatusText());
             log.info(e.toString());
 
         } catch (Exception e) {
-            result.put("statusCode", "999");
-            result.put("body", "excpetion 오류");
             log.info(e.toString());
         }
 

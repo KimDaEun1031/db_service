@@ -1,8 +1,8 @@
-package org.daeun.restapi.controller;
+package org.daeun.db.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.daeun.restapi.repository.CovidVaccineStatRepository;
-import org.daeun.restapi.vo.CovidVaccineStatVO;
+import org.daeun.db.repository.CovidVaccineStatRepository;
+import org.daeun.db.vo.CovidVaccineStatVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +31,6 @@ public class CovidApiSaveController {
         }
 
         log.info("It already in the data!");
-
-
     }
 
 }

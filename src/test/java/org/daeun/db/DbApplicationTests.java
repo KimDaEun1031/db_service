@@ -1,10 +1,10 @@
-package org.daeun.restapi;
+package org.daeun.db;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class RestApiDBsaveApplicationTests {
+class DbApplicationTests {
 
 	@Test
 	void contextLoads() {

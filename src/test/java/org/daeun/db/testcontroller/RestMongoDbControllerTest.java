@@ -1,7 +1,7 @@
-package org.daeun.restapi.testcontroller;
+package org.daeun.db.testcontroller;
 
 
-import org.daeun.restapi.controller.CovidApiRowInsertController;
+import org.daeun.db.controller.CovidApiRowInsertController;
 import org.junit.jupiter.api.Test;
 
 public class RestMongoDbControllerTest {
