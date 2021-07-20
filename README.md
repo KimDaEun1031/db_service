@@ -370,6 +370,10 @@ localhost:9091
 	- type : string
 	- default : 전국  
 
+**EXAMPLE**
+1. Basic - localhost:9091/searchCovidVaccineStat
+2. Parameter - localhost:9091/searchCovidVaccineStat?nowDate=20210405&sido=서울특별시
+
 ---
 Search Service에서 요청한 StartDate, EndDate, sido를 검색해 지정한 기간과 지역을 return 한다.
 ```
