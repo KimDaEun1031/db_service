@@ -4,7 +4,7 @@ import com.google.gson.*;
 
 import lombok.extern.slf4j.Slf4j;
 import org.daeun.db.repository.CovidVaccineStatRepository;
-import org.daeun.db.vo.CovidVaccineStatVO;
+import org.daeun.db.dao.CovidVaccineStatDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,13 +53,13 @@ public class CovidApiBatchInsertController {
             JsonElement element = jsonParser.parse(jsonInString);
             JsonArray row = (JsonArray) element.getAsJsonObject().get("data");
 
-            List<CovidVaccineStatVO> batchList = new ArrayList<>();
+            List<CovidVaccineStatDAO> batchList = new ArrayList<>();
 
             for (int j = 0; j < row.size(); j++) {
                 JsonObject rowList = (JsonObject) row.get(j);
 
-                CovidVaccineStatVO covidVO = gson.fromJson(rowList, CovidVaccineStatVO.class);
-                batchList.add(covidVO);
+                CovidVaccineStatDAO covidDAO = gson.fromJson(rowList, CovidVaccineStatDAO.class);
+                batchList.add(covidDAO);
 
             }
 
@@ -99,13 +98,13 @@ public class CovidApiBatchInsertController {
             JsonElement element = jsonParser.parse(jsonInString);
             JsonArray row = (JsonArray) element.getAsJsonObject().get("data");
 
-            List<CovidVaccineStatVO> batchList = new ArrayList<>();
+            List<CovidVaccineStatDAO> batchList = new ArrayList<>();
 
             for (int j = 0; j < row.size(); j++) {
                 JsonObject rowList = (JsonObject) row.get(j);
 
-                CovidVaccineStatVO covidVO = gson.fromJson(rowList, CovidVaccineStatVO.class);
-                batchList.add(covidVO);
+                CovidVaccineStatDAO covidDAO = gson.fromJson(rowList, CovidVaccineStatDAO.class);
+                batchList.add(covidDAO);
 
             }
 

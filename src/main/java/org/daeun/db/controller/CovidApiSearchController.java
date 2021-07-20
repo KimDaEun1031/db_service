@@ -3,7 +3,7 @@ package org.daeun.db.controller;
 import com.google.gson.*;
 import lombok.extern.slf4j.Slf4j;
 import org.daeun.db.repository.CovidVaccineStatRepository;
-import org.daeun.db.vo.CovidVaccineStatVO;
+import org.daeun.db.dao.CovidVaccineStatDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -26,19 +26,11 @@ public class CovidApiSearchController {
 
         String search = "";
         try {
-
-            List<CovidVaccineStatVO> list = new ArrayList<>();
-
             String baseDate = dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd 00:00:00"));
 
             log.info(baseDate);
 
-            list = covidVaccineStatRepository.findByBaseDateAndSido(baseDate, sido);
-
-            for (int j=0; j<list.size(); j++) {
-                search = String.valueOf(list);
-
-            }
+            search  = String.valueOf(covidVaccineStatRepository.findByBaseDateAndSido(baseDate, sido));
             log.info("success");
 
         }
@@ -64,7 +56,7 @@ public class CovidApiSearchController {
             List<String> sidoList = Arrays.asList(sido.split(","));
             log.info("sidoList = {}", sidoList);
 
-            List<CovidVaccineStatVO> list = new ArrayList<>();
+            List<CovidVaccineStatDAO> list = new ArrayList<>();
 
             list = covidVaccineStatRepository.findAllByBaseDateBetweenAndSidoIn(startDate, endDate, sidoList);
             log.info("list = {}", list);
@@ -98,7 +90,7 @@ public class CovidApiSearchController {
 
         String jsonInString = "";
 
-        List<CovidVaccineStatVO> list = covidVaccineStatRepository.findAllByBaseDateBetweenAndSidoIn ("2021-04-01 00:00:00","2021-04-03 00:00:00",sidoList);
+        List<CovidVaccineStatDAO> list = covidVaccineStatRepository.findAllByBaseDateBetweenAndSidoIn ("2021-04-01 00:00:00","2021-04-03 00:00:00",sidoList);
 //        log.info("list = {}", list);
 
         return jsonInString;

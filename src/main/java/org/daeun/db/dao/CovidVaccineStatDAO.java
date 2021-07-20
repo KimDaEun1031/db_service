@@ -1,4 +1,4 @@
-package org.daeun.db.vo;
+package org.daeun.db.dao;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @Document(collection = "covidPractice")
-public class CovidVaccineStatVO {
+public class CovidVaccineStatDAO {
 	
 	@Id
 	private String id;

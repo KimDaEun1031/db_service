@@ -4,11 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RestController;
 
 
+import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.util.*;
 
 import org.daeun.db.repository.CovidVaccineStatRepository;
-import org.daeun.db.vo.CovidVaccineStatVO;
+import org.daeun.db.dao.CovidVaccineStatDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -45,8 +46,9 @@ public class CovidApiRowInsertController {
             JsonParser gsonParser = new JsonParser();
 
             LocalDate date = LocalDate.now();
+            String sido = "전국";
 
-            String url = String.format("http://localhost:9090/covidVaccineStat?month=%02d&day=%02d",date.getMonthValue(),date.getDayOfMonth());
+            String url = String.format("http://localhost:9090/covidVaccineStat?month=%02d&day=%02d&sido=%s",date.getMonthValue(),date.getDayOfMonth(), URLEncoder.encode(sido, "UTF-8"));
             log.info("url = {}",url);
 
             ResponseEntity<Map> resultMap = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
@@ -58,10 +60,12 @@ public class CovidApiRowInsertController {
             for (int i=0; i<row.size(); i++) {
                 JsonObject rowList = (JsonObject) row.get(i);
 
-                CovidVaccineStatVO covidVO = gson.fromJson(rowList, CovidVaccineStatVO.class);
+                CovidVaccineStatDAO covidDAO = gson.fromJson(rowList, CovidVaccineStatDAO.class);
 
-//                    covidVaccineStatRepository.insert(covidVO);
+//                    covidVaccineStatRepository.insert(covidDAO);
+                log.info("result = {}", covidDAO);
                 }
+
 
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             log.info(e.toString());

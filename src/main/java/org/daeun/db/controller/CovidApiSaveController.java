@@ -2,7 +2,7 @@ package org.daeun.db.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.daeun.db.repository.CovidVaccineStatRepository;
-import org.daeun.db.vo.CovidVaccineStatVO;
+import org.daeun.db.dao.CovidVaccineStatDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +17,13 @@ public class CovidApiSaveController {
     CovidVaccineStatRepository covidVaccineStatRepository;
 
     @PostMapping (value = "/saveCovidVaccineStat", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void saveCovidVaccineStat(@RequestBody List<CovidVaccineStatVO> data) {
+    public void saveCovidVaccineStat(@RequestBody List<CovidVaccineStatDAO> data) {
 
         log.info("data = {}",data);
-//        covidVaccineStatRepository.insert(data);
-        for (CovidVaccineStatVO vo: data) {
-            List<CovidVaccineStatVO> covidVoList = covidVaccineStatRepository.findByBaseDateAndSido(vo.getBaseDate(), vo.getSido());
+        for (CovidVaccineStatDAO vo: data) {
+            List<CovidVaccineStatDAO> covidDaoList = covidVaccineStatRepository.findByBaseDateAndSido(vo.getBaseDate(), vo.getSido());
 
-            if(covidVoList.isEmpty()) {
+            if(covidDaoList.isEmpty()) {
                 covidVaccineStatRepository.insert(vo);
                 log.info("insert data success!");
             }
