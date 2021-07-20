@@ -178,6 +178,7 @@ JPA를 쉽게 사용하기 위해 스프링에서 제공하고 있는 프레임�
 + 참고 사이트 : https://dzone.com/articles/all-jpa-annotations-mapping-annotations
 
 ## 3-1 JPA DAO
+DB에 접근하기 위해 DAO를 설정한다.  
 #### CovidVaccineStatDAO.java
 ```
 @Data
@@ -199,12 +200,23 @@ public class CovidVaccineStatDAO {
 }
 ```
 
+## 3-2 Repository
+DAO가 DB에 접근하기 위해 이용할 Repository Interface를 생성한다.
+#### CovidVaccineStatRepository.java
+```
+@Repository
+@Transactional
+public interface CovidVaccineStatRepository extends MongoRepository<CovidVaccineStatDAO, String>{
 
+	List<CovidVaccineStatDAO> findByBaseDateAndSido(String baseDate, String sido);
+	
+	List<CovidVaccineStatDAO> findAllByBaseDateBetweenAndSidoIn(String startDate, String endDate, List<String> sido);
+	
+}
+```
++ 참고 사이트 : https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#reference
 
-
-
-
-#### Controller - batch Insert
+## 4. Controller - batch Insert
 RestTemplate의 exchange 메소드를 이용해 Today(EndDate) 데이터부터 StartDate 데이터까지 List에 넣어서 한 번에 DB에 Insert 한다.
 
 + batch Insert Code
@@ -252,23 +264,202 @@ RestTemplate의 exchange 메소드를 이용해 Today(EndDate) 데이터부터 S
         }
     }
 ```
-**INFO**  
-코로나 백신 예방접종 통계 API를 이용한 Restful API Server
-
 **HOST**  
-localhost:9090
+localhost:9091
 
 **PATH(GET)**  
-/searchCovidVaccineStatTodayData
+/batchInsertCovidVaccineStat
+
+## 4-1. Controller - Row Insert
+RestTemplate의 exchange 메소드를 이용해 지정된 지역과 Today 데이터를 DB에 Insert한다.
+```
+@GetMapping("/insertCovidVaccineStat")
+    public void insertCovidVaccineStat() {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+
+            HttpHeaders header = new HttpHeaders();
+            HttpEntity<?> entity = new HttpEntity<>(header);
+
+            Gson gson = new Gson();
+            JsonParser gsonParser = new JsonParser();
+
+            LocalDate date = LocalDate.now();
+            String sido = "전국";
+
+            String url = String.format("http://localhost:9090/covidVaccineStat?month=%02d&day=%02d&sido=%s",date.getMonthValue(),date.getDayOfMonth(), URLEncoder.encode(sido, "UTF-8"));
+            log.info("url = {}",url);
+
+            ResponseEntity<Map> resultMap = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+
+            String jsonInString = gson.toJson(resultMap.getBody());
+
+            JsonElement element = gsonParser.parse(jsonInString);
+            JsonArray row = (JsonArray) element.getAsJsonObject().get("data");
+            for (int i=0; i<row.size(); i++) {
+                JsonObject rowList = (JsonObject) row.get(i);
+
+                CovidVaccineStatDAO covidDAO = gson.fromJson(rowList, CovidVaccineStatDAO.class);
+
+		covidVaccineStatRepository.insert(covidDAO);
+                log.info("result = {}", covidDAO);
+	    }
+
+
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            log.info(e.toString());
+
+        } catch (Exception e) {
+            log.info(e.toString());
+        }
+
+    }
+```
+**HOST**  
+localhost:9091
+
+**PATH(GET)**  
+/insertCovidVaccineStat
+
+## 4-3. Controller - Search
+epository를 쓰기 위해 @Autowired를 사용해 Bean을 자동으로 매핑해준다.
+```
+@Autowired
+CovidVaccineStatRepository covidVaccineStatRepository;
+```
+
+설정한 날짜와 지역에 맞는 값을 Search해 return 한다.
+```
+@GetMapping("/searchCovidVaccineStat")
+public String searchCovidVaccineStat(@RequestParam(required = false, defaultValue = "#{T(java.time.LocalDate).now()}") @DateTimeFormat(pattern = "yyyyMMdd") LocalDate dateTime,
+                                     @RequestParam(required = false, defaultValue = "전국") String sido) {
+
+        String search = "";
+        try {
+            String baseDate = dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd 00:00:00"));
+            log.info(baseDate);
+
+            search  = String.valueOf(covidVaccineStatRepository.findByBaseDateAndSido(baseDate, sido));
+            log.info("success");
+
+        }
+        catch (Exception e) {
+            log.info("error");
+            log.info(e.toString());
+        }
+
+        return search;
+}
+```
+**HOST**  
+localhost:9091   
+
+**PATH(GET)**  
+/searchCovidVaccineStat
 
 **PARAMETERS**  
-1. nowDate  
+1. dateTime  
 	- in : query  
-	- description : 오늘 날짜(기본값-오늘)  
-	- type : string  
+	- description : 날짜
+	- type : LocalDate
+	- default : todayDate  
 
 2. sido
 	- in : query  
-	- description : 지역명칭(기본값-전국)
+	- description : 지역명칭
+	- type : string
+	- default : 전국  
+
+---
+Search Service에서 요청한 StartDate, EndDate, sido를 검색해 지정한 기간과 지역을 return 한다.
+```
+ @GetMapping("/searchPeriodDataCovidVaccineStat")
+    public String searchPeriodDataCovidVaccineStat(String startDate, String endDate, String sido) {
+
+        log.info("startDate = {}", startDate);
+        log.info("endDate = {}", endDate);
+        log.info("sido = {}",sido);
+
+        String jsonInString = "";
+        try {
+
+            List<String> sidoList = Arrays.asList(sido.split(","));
+            log.info("sidoList = {}", sidoList);
+
+            List<CovidVaccineStatDAO> list = new ArrayList<>();
+
+            list = covidVaccineStatRepository.findAllByBaseDateBetweenAndSidoIn(startDate, endDate, sidoList);
+            log.info("list = {}", list);
+
+            Gson gson = new Gson();
+            JsonParser jsonParser = new JsonParser();
+
+            String jsonList = gson.toJson(list);
+            JsonElement element = jsonParser.parse(jsonList);
+            jsonInString = String.valueOf(element);
+
+            log.info("data = {} ", jsonInString);
+
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            log.error(e.toString());
+
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
+
+        return jsonInString;
+    }
+```
+**HOST**  
+localhost:9091   
+
+**PATH(GET)**  
+/searchPeriodDataCovidVaccineStat
+
+**PARAMETERS**  
+1. startDate  
+	- in : query  
+	- description : 지정한 시작 날짜
 	- type : string  
 
+2. endDate
+	- in : query  
+	- description : 지정한 끝 날짜
+	- type : string
+
+3. sido
+	- in : query  
+	- description : 지역명칭
+	- type : string
+
+## 4-4. Controller - Save
+Collector Service에서 Push 한 데이터를 List로 받아 Insert 해준다.
+단, DB 안에 데이터가 존재한다면 데이터는 Insert 하지 않는다.
+```
+@PostMapping (value = "/saveCovidVaccineStat", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void saveCovidVaccineStat(@RequestBody List<CovidVaccineStatDAO> data) {
+
+        log.info("data = {}",data);
+        for (CovidVaccineStatDAO vo: data) {
+            List<CovidVaccineStatDAO> covidDaoList = covidVaccineStatRepository.findByBaseDateAndSido(vo.getBaseDate(), vo.getSido());
+
+            if(covidDaoList.isEmpty()) {
+                covidVaccineStatRepository.insert(vo);
+                log.info("insert data success!");
+            }
+        }
+
+        log.info("It already in the data!");
+    }
+```
+**HOST**  
+localhost:9091   
+
+**PATH(POST)**  
+/saveCovidVaccineStat
+
+**PARAMETERS**  
+1. data  
+	- in : query  
+	- description : Collector Service에서 Push 한 데이터
+	- type : List  
