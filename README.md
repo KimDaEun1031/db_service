@@ -32,7 +32,7 @@
      ├─classes
      ├─generated-sources ...
 ```
-DB Service는 Collector Service에서 Push한 데이터를 MongoDB에 Insert한다.
+DB Service는 Collector Service에서 Push한 데이터를 MongoDB에 Insert한다.  
 Insert 시 DB 안에 데이터가 들어가있으면 Insert 하지 않고 들어가 있지 않으면 Insert 한다.
 > + 참고 사이트들을 블로그에 올려놓았다.  
 > https://relaxed-it-study.tistory.com/category/JAVA/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8
